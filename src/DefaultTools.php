@@ -1,5 +1,7 @@
 <?php
 //
+namespace Api\Lib;
+//
 class DefaultTools {
 	//
 	public function __construction(){

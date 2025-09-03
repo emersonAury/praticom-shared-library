@@ -1,5 +1,7 @@
 <?php
 //
+namespace Api\Lib;
+//
 error_reporting(0);
 register_shutdown_function(['Errors','systemErrors']);
 //

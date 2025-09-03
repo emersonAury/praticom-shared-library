@@ -1,5 +1,7 @@
 <?php
 //
+namespace Api\Lib;
+//
 class Form {
 	//
 	private $name;

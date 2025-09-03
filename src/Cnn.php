@@ -1,5 +1,7 @@
 <?php
 //
+namespace Api\Lib;
+//
 use Firebase\JWT\JWT;
 //
 class Conn {
