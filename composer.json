@@ -1,0 +1,12 @@
+{
+    "name": "emersonAury/praticom-shared-library",
+    "description": "Pacote de distribuição de bibliotecas padrão",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Emerson Auricchio"
+        }
+    ],
+    "require": {}
+}
