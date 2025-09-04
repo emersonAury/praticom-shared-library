@@ -8,5 +8,10 @@
             "name": "Emerson Auricchio"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Shared\\Lib\\": "src/"
+        }
+    },
     "require": {}
 }

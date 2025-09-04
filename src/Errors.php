@@ -1,6 +1,6 @@
 <?php
 //
-namespace Sahred\Lib;
+namespace Shared\Lib;
 //
 error_reporting(0);
 register_shutdown_function(['Errors','systemErrors']);

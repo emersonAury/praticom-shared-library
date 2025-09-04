@@ -4,7 +4,7 @@ namespace Shared\Lib;
 //
 use Firebase\JWT\JWT;
 //
-class Conn {
+class Cnn {
 	//
 	public $db;
 	//
