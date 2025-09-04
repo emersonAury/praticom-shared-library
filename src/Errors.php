@@ -1,6 +1,6 @@
 <?php
 //
-namespace Api\Lib;
+namespace Sahred\Lib;
 //
 error_reporting(0);
 register_shutdown_function(['Errors','systemErrors']);

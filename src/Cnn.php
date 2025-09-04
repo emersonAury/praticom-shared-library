@@ -1,6 +1,6 @@
 <?php
 //
-namespace Api\Lib;
+namespace Shared\Lib;
 //
 use Firebase\JWT\JWT;
 //
