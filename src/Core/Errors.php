@@ -1,6 +1,6 @@
 <?php
 //
-namespace Shared\Lib;
+namespace Praticom\Shared\Core;
 //
 error_reporting(0);
 register_shutdown_function(['Errors','systemErrors']);

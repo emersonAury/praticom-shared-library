@@ -1,8 +1,8 @@
 <?php
 //
-namespace Shared\Lib;
+namespace Praticom\Shared\Tools;
 //
-class Form {
+class FormTools {
 	//
 	private $name;
 	private $label;

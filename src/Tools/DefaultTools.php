@@ -1,6 +1,6 @@
 <?php
 //
-namespace Shared\Lib;
+namespace Praticom\Shared\Tools;
 //
 class DefaultTools {
 	//
