@@ -1,5 +1,7 @@
 <?php
 //
+// src/Core/Errors.php
+//
 namespace Praticom\Shared\Core;
 //
 error_reporting(0);

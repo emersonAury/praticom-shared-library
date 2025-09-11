@@ -1,5 +1,6 @@
 <?php
 //
+// src/Auth/JWTHandler.php
 namespace Praticom\Shared\Auth;
 //
 use Firebase\JWT\JWT;

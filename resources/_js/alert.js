@@ -1,3 +1,5 @@
+// resources/_js/alert.js
+//
 export function showAlert(response, modal = "#main-alert") {
     // Esconde qualquer alerta anterior no mesmo container
     hideAlert(modal, response);
