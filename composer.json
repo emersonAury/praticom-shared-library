@@ -1,0 +1,12 @@
+{
+    "name": "praticom/shared-library",
+    "description": "Biblioteca compartilhada para todos os microserviços do PRATICOM ERP",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Praticom\\": "src/"
+        }
+    },
+    "require": {}
+}
