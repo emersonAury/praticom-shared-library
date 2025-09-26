@@ -5,12 +5,7 @@
 var dir = "api/"+api+"/backEnd/";
 var errors = [];
 //
-$(function(){
-	//
-	console.log("Inicio do default.js");
-})
-//
-function getAjax(dataObj,ajaxFile,responseFunction){
+export function getAjax(dataObj,ajaxFile,responseFunction){
 	//
 	console.log(dataObj);
 	//
@@ -40,7 +35,7 @@ function getAjax(dataObj,ajaxFile,responseFunction){
 	});
 }
 //
-function validationAndSubmit(ajaxFile,responseFunction){
+export function validationAndSubmit(ajaxFile,responseFunction){
 	//
 	hideAlert(null, $('form :input'));
 	//
@@ -54,8 +49,8 @@ function validationAndSubmit(ajaxFile,responseFunction){
 function getFormFields(){
 	//
 	var inputs = [];
-	var error = false;
-	errors = [];
+	var error  = false;
+	errors     = [];
 	//
 	$('form :input').each(function(i,v){
 		//

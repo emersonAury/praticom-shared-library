@@ -1,7 +1,5 @@
 <?php
 //
-// src/Schema/SchemaService.php
-//
 namespace Praticom\Shared\Schema;
 //
 use InvalidArgumentException;
