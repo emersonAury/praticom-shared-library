@@ -12,13 +12,20 @@ class FormTools {
 	private $value;
 	private $cnn;
 	//
-	public function __construct($cnn,$name,$label,$attr,$value=''){
+	public function __construct($cnn,$input){
 		//
-		$this->name  = $name;
-		$this->label = $label;
-		$this->attr  = $attr;
-		$this->value = $value;
-		$this->cnn 	 = $cnn;
+		$this->cnn 	 	= $cnn;
+		$this->name  	= $input['name'];
+		$this->label 	= $input['label'];
+		$this->attr  	= $input['input'];
+		$this->required = $attr['required'] ?? false;
+		$this->type		= $attr['type'] ?? 'text';
+		$this->icon 	= $attr['icon'] ?? '';
+		$this->param  	= $attr['parameters'] ?? null;
+		$this->value 	= $input['defaultValue'] ?? '';
+	}
+	//
+	private function createForm(){
 		//
 		switch($attr->type){
 			//
@@ -34,7 +41,7 @@ class FormTools {
 			//case 'label': 		return $this->getLabel(); 		break;
 			default: 			echo $this->getText();
 		}
-	}	
+	}
 	//
 	private function getHidden(){
 		//
