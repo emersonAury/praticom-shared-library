@@ -2,7 +2,7 @@
 //
 // src/Tools/FormTools.php
 //
-namespace Praticom\Shared\Tools;
+namespace Praticom\Tools;
 //
 class FormTools {
 	//

@@ -2,7 +2,7 @@
 //
 // src/Tools/DefaultTools.php
 //
-namespace Praticom\Shared\Tools;
+namespace Praticom\Tools;
 //
 class DefaultTools {
 	//

@@ -2,7 +2,7 @@
 //
 // src/Database/Cnn.php
 //
-namespace Praticom\Shared\Database;
+namespace Praticom\Database;
 //
 use PDO;
 use PDOException;

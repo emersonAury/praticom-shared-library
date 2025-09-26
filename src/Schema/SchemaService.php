@@ -1,6 +1,6 @@
 <?php
 //
-namespace Praticom\Shared\Schema;
+namespace Praticom\Schema;
 //
 use InvalidArgumentException;
 use RuntimeException;

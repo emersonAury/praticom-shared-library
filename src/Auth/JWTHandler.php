@@ -1,7 +1,7 @@
 <?php
 //
 // src/Auth/JWTHandler.php
-namespace Praticom\Shared\Auth;
+namespace Praticom\Auth;
 //
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;

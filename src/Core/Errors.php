@@ -2,7 +2,7 @@
 //
 // src/Core/Errors.php
 //
-namespace Praticom\Shared\Core;
+namespace Praticom\Core;
 //
 error_reporting(0);
 register_shutdown_function(['Errors','systemErrors']);
