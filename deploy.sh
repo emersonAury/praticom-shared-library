@@ -115,7 +115,7 @@ sync_js_to_dir() {
     local TARGET_DIR=$1
     local SERVICE_NAME=$2
     
-    local JS_DIR="$TARGET_DIR/_js"
+    local JS_DIR="$TARGET_DIR/_dist/_js"
     mkdir -p "$JS_DIR"
     
     local UPDATED=0
@@ -144,14 +144,14 @@ sync_js_to_dir() {
 # Sincronizar para APIs
 for dir in "$API_DIR"/*/ ; do
     if [ -d "$dir" ]; then
-        SERVICE_NAME="api/_dist/$(basename "$dir")"
+        SERVICE_NAME="api/$(basename "$dir")/_dist"
         sync_js_to_dir "$dir" "$SERVICE_NAME"
     fi
 done
 
 # Sincronizar para Dashboard
 if [ -d "$DASHBOARD_DIR" ]; then
-    sync_js_to_dir "$DASHBOARD_DIR" "dashboard"
+    sync_js_to_dir "$DASHBOARD_DIR" "dashboard/_dist"
 fi
 
 log_write "Backup criado em $BACKUP_DIR/$TIMESTAMP" "$SYNC_LOG"
