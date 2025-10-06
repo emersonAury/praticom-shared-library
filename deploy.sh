@@ -144,7 +144,7 @@ sync_js_to_dir() {
 # Sincronizar para APIs
 for dir in "$API_DIR"/*/ ; do
     if [ -d "$dir" ]; then
-        SERVICE_NAME="api/$(basename "$dir")"
+        SERVICE_NAME="api/_dist/$(basename "$dir")"
         sync_js_to_dir "$dir" "$SERVICE_NAME"
     fi
 done
