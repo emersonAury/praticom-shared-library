@@ -1,0 +1,14 @@
+# Arquivos que não devem ser incluídos quando a biblioteca for instalada via Composer
+/.github export-ignore
+/resources export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/deploy.sh export-ignore
+/update.sh export-ignore
+/quick-deploy.sh export-ignore
+/check_git.sh export-ignore
+/sync_files.js export-ignore
+/DEPLOY_README.md export-ignore
+/README.md export-ignore
+*.log export-ignore
+*.txt export-ignore

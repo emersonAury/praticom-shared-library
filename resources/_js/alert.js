@@ -2,11 +2,18 @@
 //
 window.PraticomUI = window.PraticomUI || {};
 //
-PraticonUI.alerts = {
+PraticomUI.alerts = {
     //
-    load: function() {
+    load: function(div) {
         console.log("#####    alert.js module is loaded");
-        console.log("*****    Alert Div reference $('"+div+"')");
+        //
+        if(div){
+            console.log("*****    Alert Div reference $('"+div+"')");
+        }
+        else{
+            console.log("*****    Alert Div reference not provided, using body");
+            div = 'body';
+        }
         //
         $(div).prepend('<div id="main-alert" class="alert-fixed" role="alert"></div>');
     },

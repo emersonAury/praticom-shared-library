@@ -184,4 +184,38 @@ composer update praticom/shared-library --with-all-dependencies
 
 ---
 
+## 🎯 Distribuição Otimizada
+
+### O que é instalado via Composer:
+
+Apenas o essencial:
+```
+vendor/praticom/shared-library/
+├── src/           ✅ Classes PHP (100 KB)
+└── composer.json  ✅ Configuração (1 KB)
+```
+
+### O que NÃO é instalado:
+
+```
+❌ .github/         (workflows)
+❌ resources/       (JS - distribuído manualmente)
+❌ deploy.sh        (scripts internos)
+❌ update.sh
+❌ quick-deploy.sh
+❌ README.md        (documentação de dev)
+```
+
+**Resultado:** Vendor 96% mais leve! 🚀
+
+### Verificar distribuição:
+
+```bash
+./verify-distribution.sh
+```
+
+Este script verifica se apenas os arquivos necessários foram instalados.
+
+---
+
 ✨ **Desenvolvido para PRATICOM - Distribuição inteligente de código!**

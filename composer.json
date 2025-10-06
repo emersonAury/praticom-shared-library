@@ -5,8 +5,26 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Praticom\\": "src/"
+            "Praticom\\SharedLibrary\\": "src/"
         }
     },
-    "require": {}
+    "require": {},
+    "archive": {
+        "exclude": [
+            "/.github",
+            "/resources",
+            "/.git",
+            "/.gitattributes",
+            "/.gitignore",
+            "/deploy.sh",
+            "/update.sh",
+            "/quick-deploy.sh",
+            "/check_git.sh",
+            "/sync_files.js",
+            "/DEPLOY_README.md",
+            "/README.md",
+            "*.log",
+            "*.txt"
+        ]
+    }
 }

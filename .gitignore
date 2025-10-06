@@ -1,0 +1,24 @@
+# Composer
+/vendor/
+composer.lock
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+*.txt
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
