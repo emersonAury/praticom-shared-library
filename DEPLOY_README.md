@@ -2,11 +2,11 @@
 
 ## 📋 Scripts Disponíveis
 
-### 1. **quick-deploy.sh** ⭐ (RECOMENDADO)
+### 1. **deploy.sh** ⭐ (RECOMENDADO)
 Deploy completo em um único comando - faz tudo automaticamente!
 
 ```bash
-./quick-deploy.sh "Mensagem do commit" "1.0.5"
+./deploy.sh "Mensagem do commit" "1.0.5"
 ```
 
 **O que faz:**
@@ -52,7 +52,7 @@ Verifica e resolve problemas de Git
 ### Cenário 1: Deploy rápido (MAIS COMUM)
 ```bash
 cd praticom-shared-library
-./quick-deploy.sh "Adicionar feature X" "1.0.5"
+./deploy.sh "Adicionar feature X" "1.0.5"
 ```
 
 ### Cenário 2: Verificar antes de fazer deploy
@@ -111,8 +111,8 @@ Backups automáticos dos arquivos JS em:
 
 ### "Alterações não commitadas"
 ```bash
-# Solução rápida: use quick-deploy
-./quick-deploy.sh "Minha mensagem" "1.0.5"
+# Solução rápida: use deploy
+./deploy.sh "Minha mensagem" "1.0.5"
 
 # Ou resolva manualmente
 git add .
@@ -127,7 +127,7 @@ git tag -d v1.0.5
 git push origin :refs/tags/v1.0.5
 
 # Use uma nova versão
-./quick-deploy.sh "Nova versão" "1.0.6"
+./deploy.sh "Nova versão" "1.0.6"
 ```
 
 ### Composer não atualiza
@@ -145,7 +145,7 @@ composer update praticom/shared-library --with-all-dependencies
 
 ## 🎨 Comparação dos Scripts
 
-| Feature | quick-deploy.sh | deploy.sh | update.sh |
+| Feature | deploy.sh | deploy.sh | update.sh |
 |---------|----------------|-----------|-----------|
 | Commit automático | ✅ | ❌ | ❌ |
 | Push automático | ✅ | ✅ | ✅ |
@@ -159,7 +159,7 @@ composer update praticom/shared-library --with-all-dependencies
 
 ## 💡 Dicas
 
-1. **Use quick-deploy.sh sempre que possível** - é mais rápido e seguro
+1. **Use deploy.sh sempre que possível** - é mais rápido e seguro
 2. **Incremente a versão sempre** - v1.0.5 → v1.0.6 → v1.0.7
 3. **Mensagens descritivas** - facilita rastrear mudanças depois
 4. **Verifique os logs** - em caso de problemas
@@ -170,16 +170,16 @@ composer update praticom/shared-library --with-all-dependencies
 
 ```bash
 # Deploy de nova feature
-./quick-deploy.sh "Adicionar validação de formulários" "1.1.0"
+./deploy.sh "Adicionar validação de formulários" "1.1.0"
 
 # Correção de bug
-./quick-deploy.sh "Corrigir erro no login" "1.0.8"
+./deploy.sh "Corrigir erro no login" "1.0.8"
 
 # Atualização de segurança
-./quick-deploy.sh "Patch de segurança XSS" "1.0.9"
+./deploy.sh "Patch de segurança XSS" "1.0.9"
 
 # Nova funcionalidade major
-./quick-deploy.sh "Implementar dashboard completo" "2.0.0"
+./deploy.sh "Implementar dashboard completo" "2.0.0"
 ```
 
 ---

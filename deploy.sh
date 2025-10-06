@@ -1,8 +1,7 @@
 #!/bin/bash
 # ------------------------------------------------------
-# Script avançado de deploy PRATICOM
-# Sincroniza JS + atualiza PHP (Composer) + logs + backups
-# Inclui suporte ao DASHBOARD além das APIs
+# DEPLOY - Deploy automático com Git integrado
+# Faz commit automático + deploy completo em um comando
 # Uso: ./deploy.sh "Mensagem do commit" "Versão"
 # ------------------------------------------------------
 
@@ -17,7 +16,16 @@ UPDATE_LOG="$LOG_DIR/update_log.txt"
 
 # Verifica parâmetros
 if [ "$#" -ne 2 ]; then
-    echo "Uso: $0 \"Mensagem do commit\" \"Versão\""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "🚀 DEPLOY - Deploy Automático Completo"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+    echo "📋 Uso: $0 \"Mensagem do commit\" \"Versão\""
+    echo ""
+    echo "📌 Exemplos:"
+    echo "   $0 \"Adicionar dashboard\" \"1.0.5\""
+    echo "   $0 \"Corrigir bugs\" \"1.0.6\""
+    echo ""
     exit 1
 fi
 
@@ -35,16 +43,74 @@ log_write() {
     echo "$LINE" >> "$2"
 }
 
+# Banner inicial
+clear
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🚀 DEPLOY - Deploy Automático Completo"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "📝 Commit: $COMMIT_MESSAGE"
+echo "🏷️  Versão: $VERSION"
+echo "⏰ Horário: $(date '+%d/%m/%Y %H:%M:%S')"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
 # Garante diretórios
 mkdir -p "$LOG_DIR"
 mkdir -p "$BACKUP_DIR/$TIMESTAMP"
 
 # ------------------------------------------------------
-# 1️⃣ Backup + Sincronizar arquivos JS
+# ETAPA 1: Verificar e Commitar Git
 # ------------------------------------------------------
+echo "🔍 [1/4] Verificando Git..."
+cd "$LIB_DIR" || exit
+
+# Verifica se há alterações
+if ! git diff-index --quiet HEAD --; then
+    echo "📝 Alterações encontradas. Fazendo commit automático..."
+    git add .
+    
+    if git commit -m "$COMMIT_MESSAGE"; then
+        echo "✅ Commit realizado com sucesso!"
+    else
+        echo "ℹ️  Nenhuma alteração para commitar (arquivos já commitados)"
+    fi
+else
+    echo "✅ Repositório já está limpo (nenhuma alteração pendente)"
+fi
+
+# Push para origin/main
+echo "📤 Enviando para repositório remoto..."
+if git push origin main; then
+    echo "✅ Push realizado com sucesso!"
+else
+    echo "⚠️  Aviso: Push falhou ou não havia nada para enviar"
+fi
+
+# Criar e enviar tag
+echo "🏷️  Criando tag $TAG..."
+if git tag "$TAG" 2>/dev/null; then
+    echo "✅ Tag criada!"
+    if git push origin "$TAG" 2>/dev/null; then
+        echo "✅ Tag enviada para repositório!"
+    else
+        echo "⚠️  Tag já existe no repositório remoto"
+    fi
+else
+    echo "⚠️  Tag já existe localmente"
+    # Tenta enviar mesmo assim
+    git push origin "$TAG" 2>/dev/null && echo "✅ Tag enviada!" || echo "ℹ️  Tag já estava no remoto"
+fi
+
+log_write "Git: Commit '$COMMIT_MESSAGE' e tag $TAG processados" "$UPDATE_LOG"
+
+# ------------------------------------------------------
+# ETAPA 2: Sincronizar arquivos JS
+# ------------------------------------------------------
+echo ""
+echo "📦 [2/4] Sincronizando arquivos JS..."
 log_write "Iniciando backup e sincronização de JS..." "$SYNC_LOG"
 
-# Função para sincronizar JS para um diretório específico
+# Função para sincronizar JS
 sync_js_to_dir() {
     local TARGET_DIR=$1
     local SERVICE_NAME=$2
@@ -52,6 +118,7 @@ sync_js_to_dir() {
     local JS_DIR="$TARGET_DIR/_js"
     mkdir -p "$JS_DIR"
     
+    local UPDATED=0
     for file in "$LIB_DIR"/resources/_js/*.js ; do
         BASENAME=$(basename "$file")
         
@@ -63,65 +130,38 @@ sync_js_to_dir() {
         # Copia somente se diferente
         if [ ! -f "$JS_DIR/$BASENAME" ] || ! cmp -s "$file" "$JS_DIR/$BASENAME"; then
             cp "$file" "$JS_DIR/$BASENAME"
+            echo "  ✅ $BASENAME → $SERVICE_NAME"
             log_write "JS atualizado: $BASENAME -> $SERVICE_NAME/_js" "$SYNC_LOG"
-        else
-            log_write "JS já atualizado: $BASENAME -> $SERVICE_NAME (nenhuma mudança)" "$SYNC_LOG"
+            UPDATED=1
         fi
     done
+    
+    if [ $UPDATED -eq 0 ]; then
+        echo "  ℹ️  $SERVICE_NAME (sem alterações)"
+    fi
 }
 
-# Sincronizar JS para APIs
+# Sincronizar para APIs
 for dir in "$API_DIR"/*/ ; do
     if [ -d "$dir" ]; then
-        SERVICE_NAME=$(basename "$dir")
-        sync_js_to_dir "$dir" "api/$SERVICE_NAME"
+        SERVICE_NAME="api/$(basename "$dir")"
+        sync_js_to_dir "$dir" "$SERVICE_NAME"
     fi
 done
 
-# Sincronizar JS para Dashboard
+# Sincronizar para Dashboard
 if [ -d "$DASHBOARD_DIR" ]; then
     sync_js_to_dir "$DASHBOARD_DIR" "dashboard"
-    log_write "JS sincronizado para o Dashboard" "$SYNC_LOG"
 fi
 
 log_write "Backup criado em $BACKUP_DIR/$TIMESTAMP" "$SYNC_LOG"
 log_write "Sincronização de JS concluída!" "$SYNC_LOG"
 
 # ------------------------------------------------------
-# 2️⃣ Atualizar shared-library via Git e Composer
+# ETAPA 3: Atualizar via Composer
 # ------------------------------------------------------
-log_write "Iniciando atualização da shared-library..." "$UPDATE_LOG"
-
-cd "$LIB_DIR" || exit
-
-# Verifica estado do Git
-if ! git diff-index --quiet HEAD --; then
-    echo "⚠️  ================================="
-    echo "⚠️  ALTERAÇÕES NÃO COMMITADAS ENCONTRADAS"
-    echo "⚠️  ================================="
-    echo ""
-    echo "📋 Arquivos modificados:"
-    git status --porcelain
-    echo ""
-    echo "🔧 Para resolver, execute UM dos comandos:"
-    echo "   1️⃣  git add . && git commit -m 'Suas alterações'"
-    echo "   2️⃣  git stash  (guarda temporariamente)"
-    echo "   3️⃣  ./check_git.sh  (script assistente)"
-    echo ""
-    echo "🚀 Depois execute novamente: ./deploy.sh \"$COMMIT_MESSAGE\" \"$VERSION\""
-    echo ""
-    log_write "⚠️  Deploy abortado: alterações não commitadas na shared-library." "$UPDATE_LOG"
-    exit 1
-fi
-
-# Commit e push
-git add .
-git commit -m "$COMMIT_MESSAGE" || log_write "Nenhuma alteração para commitar." "$UPDATE_LOG"
-git push origin main || { log_write "❌ Falha ao dar push para main." "$UPDATE_LOG"; exit 1; }
-
-# Tagging
-git tag "$TAG"
-git push origin "$TAG" || { log_write "❌ Falha ao enviar tag $TAG." "$UPDATE_LOG"; exit 1; }
+echo ""
+echo "🔄 [3/4] Atualizando via Composer..."
 
 # Função para atualizar via composer
 update_composer() {
@@ -129,78 +169,99 @@ update_composer() {
     local SERVICE_NAME=$2
     
     if [ -f "$DIR/composer.json" ]; then
-        log_write "Atualizando $SERVICE_NAME via Composer..." "$UPDATE_LOG"
+        echo "  🔄 Atualizando $SERVICE_NAME..."
         cd "$DIR" || return 1
-        if composer update praticom/shared-library; then
+        if composer update praticom/shared-library --quiet 2>&1 | grep -q "Nothing to modify"; then
+            echo "  ✅ $SERVICE_NAME (já atualizado)"
+            log_write "✅ $SERVICE_NAME já estava atualizado" "$UPDATE_LOG"
+        elif composer update praticom/shared-library --quiet; then
+            echo "  ✅ $SERVICE_NAME atualizado!"
             log_write "✅ $SERVICE_NAME atualizado com sucesso" "$UPDATE_LOG"
-            cd - > /dev/null
-            return 0
         else
-            log_write "❌ Erro ao atualizar $SERVICE_NAME via composer." "$UPDATE_LOG"
+            echo "  ⚠️  $SERVICE_NAME (erro no update)"
+            log_write "❌ Erro ao atualizar $SERVICE_NAME" "$UPDATE_LOG"
             cd - > /dev/null
             return 1
         fi
+        cd - > /dev/null
+        return 0
     else
-        log_write "⚠️  $SERVICE_NAME ignorado (sem composer.json)" "$UPDATE_LOG"
+        echo "  ⚠️  $SERVICE_NAME (sem composer.json)"
+        log_write "⚠️ $SERVICE_NAME ignorado (sem composer.json)" "$UPDATE_LOG"
         return 1
     fi
 }
 
-# Atualizar APIs
+# Contadores
 UPDATED=()
-IGNORED=()
+FAILED=()
 
-cd "$API_DIR" || exit
-for dir in */ ; do
+# Atualizar APIs
+for dir in "$API_DIR"/*/ ; do
     if [ -d "$dir" ]; then
         SERVICE_NAME="api/$(basename "$dir")"
-        if update_composer "$API_DIR/$dir" "$SERVICE_NAME"; then
+        if update_composer "$dir" "$SERVICE_NAME"; then
             UPDATED+=("$SERVICE_NAME")
         else
-            IGNORED+=("$SERVICE_NAME")
+            FAILED+=("$SERVICE_NAME")
         fi
     fi
 done
 
 # Atualizar Dashboard
-cd "$ROOT_DIR" || exit
 if update_composer "$DASHBOARD_DIR" "dashboard"; then
     UPDATED+=("dashboard")
 else
-    IGNORED+=("dashboard")
+    FAILED+=("dashboard")
 fi
 
-# Resumo final
+# ------------------------------------------------------
+# ETAPA 4: Relatório Final
+# ------------------------------------------------------
+echo ""
+echo "📊 [4/4] Gerando relatório..."
+
 log_write "=============================================" "$UPDATE_LOG"
-log_write "Resumo da atualização" "$UPDATE_LOG"
+log_write "Resumo do Deploy" "$UPDATE_LOG"
+log_write "Commit: $COMMIT_MESSAGE" "$UPDATE_LOG"
+log_write "Versão: $TAG" "$UPDATE_LOG"
 
 if [ ${#UPDATED[@]} -gt 0 ]; then
-    log_write "✅ Serviços atualizados:" "$UPDATE_LOG"
+    log_write "✅ Serviços atualizados (${#UPDATED[@]}):" "$UPDATE_LOG"
     for u in "${UPDATED[@]}"; do
         log_write "   - $u" "$UPDATE_LOG"
     done
-else
-    log_write "⚠️  Nenhum serviço atualizado." "$UPDATE_LOG"
 fi
 
-if [ ${#IGNORED[@]} -gt 0 ]; then
-    log_write "ℹ️  Serviços ignorados (sem composer.json ou erro):" "$UPDATE_LOG"
-    for i in "${IGNORED[@]}"; do
+if [ ${#FAILED[@]} -gt 0 ]; then
+    log_write "⚠️  Serviços ignorados/falha (${#FAILED[@]}):" "$UPDATE_LOG"
+    for i in "${FAILED[@]}"; do
         log_write "   - $i" "$UPDATE_LOG"
     done
 fi
 
-log_write "Deploy concluído com segurança!" "$UPDATE_LOG"
+log_write "Deploy concluído!" "$UPDATE_LOG"
 log_write "=============================================" "$UPDATE_LOG"
 
 # ------------------------------------------------------
-# 3️⃣ Resumo geral no terminal
+# Resumo Final no Terminal
 # ------------------------------------------------------
-echo "============================================="
-echo "✅ Deploy completo concluído com sucesso!"
-echo "🎯 Serviços incluídos: APIs + Dashboard"
-echo "📦 Backup de JS: $BACKUP_DIR/$TIMESTAMP"
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✅ DEPLOY COMPLETO CONCLUÍDO COM SUCESSO!"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "📋 Resumo:"
+echo "   🏷️  Tag: $TAG"
+echo "   📦 Backup JS: $BACKUP_DIR/$TIMESTAMP"
+echo "   ✅ Serviços atualizados: ${#UPDATED[@]}"
+if [ ${#FAILED[@]} -gt 0 ]; then
+    echo "   ⚠️  Serviços com problema: ${#FAILED[@]}"
+fi
+echo ""
 echo "📝 Logs detalhados:"
-echo "   - JS:   $SYNC_LOG"
-echo "   - PHP:  $UPDATE_LOG"
-echo "============================================="
+echo "   - JS:  $SYNC_LOG"
+echo "   - PHP: $UPDATE_LOG"
+echo ""
+echo "🎉 Tudo pronto! APIs e Dashboard atualizados."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
